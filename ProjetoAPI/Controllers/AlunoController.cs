@@ -83,15 +83,19 @@ namespace ProjetoAPI.Controllers
         [HttpGet("BuscarCep/{cep}")]
         public async Task<IActionResult> BuscarCep(string cep)
         {
-
+            Retorno<Endereco> retorno = new(null);
             try
             {
                 var endereco = await _cepService.BuscarfEnderecoPorCep(cep);
-                return Ok(endereco);
+                retorno.CarregaRetorno(endereco, true, "Busca Realizada com Sucesso", 200);
+
+                return Ok(retorno);
+
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                retorno.CarregaRetorno(false, "Problemas ao buscar dados do cep infomado", 400);
+                return BadRequest();
             }
 
         }
