@@ -51,6 +51,7 @@ namespace ProjetoAPI.Controllers
         [HttpPatch("AtualizarAluno")]
         public async Task<IActionResult> AtualizarAluno([FromBody] Aluno aluno)
         {
+            Retorno<Aluno> retorno = new(null);
             try
             {
                 var aluno1 = await _alunoApplication.AtualizarAluno(aluno);
@@ -66,14 +67,18 @@ namespace ProjetoAPI.Controllers
         [HttpDelete("DeletarAluno/{codigo}")]
         public async Task<IActionResult> DeletarAluno(int codigo)
         {
+            Retorno<Aluno> retorno = new(null);
             try
             {
-                bool res = await _alunoApplication.Excluir(codigo);
-                return Ok(new { FoiExcluido = res });
+                var resposta = await _alunoApplication.Excluir(codigo);
+                retorno.CarregaRetorno(resposta, true, "Aluno deletado com Sucesso", 200);
+
+                return Ok(retorno);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                retorno.CarregaRetorno(false, "Problemas ao deletar aluno infomado", 400);
+                return BadRequest();
             }
 
         }
