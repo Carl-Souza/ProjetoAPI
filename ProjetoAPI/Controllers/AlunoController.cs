@@ -22,14 +22,18 @@ namespace ProjetoAPI.Controllers
         [HttpGet("BuscarDadosAluno/{codigo}")]
         public async Task<IActionResult> BuscarDadosAluno(int codigo)
         {
+            Retorno<Aluno> retorno = new(null);
             try
             {
                 Aluno aluno = await _alunoApplication.BuscarAluno(codigo);
-                return Ok(aluno);
+                retorno.CarregaRetorno(aluno, true, "Busca pelo aluno com sucesso", 200);
+
+                return Ok(retorno);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                retorno.CarregaRetorno(null, false, "Problemas ao buscar aluno infomado", 400);
+                return BadRequest();
             }
 
         }
@@ -37,14 +41,18 @@ namespace ProjetoAPI.Controllers
         [HttpPost("AdicionarAluno")]
         public async Task<IActionResult> AdicionarAluno([FromBody] Aluno aluno)
         {
+            Retorno<Aluno> retorno = new(null);
             try
             {
                 await _alunoApplication.AdicionarAluno(aluno);
-                return Ok(aluno);
+                retorno.CarregaRetorno(aluno, true, "Aluno adicionado com sucesso", 200);
+
+                return Ok(retorno);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                retorno.CarregaRetorno(null, false, "Problemas ao adicionar aluno infomado", 400);
+                return BadRequest();
             }
 
         }
@@ -55,11 +63,14 @@ namespace ProjetoAPI.Controllers
             try
             {
                 var aluno1 = await _alunoApplication.AtualizarAluno(aluno);
-                return Ok(aluno1);
+                retorno.CarregaRetorno(aluno1, true, "Aluno atualizado com sucesso", 200);
+
+                return Ok(retorno);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                retorno.CarregaRetorno(null, false, "Problemas ao atualizar aluno infomado", 400);
+                return BadRequest();
             }
 
         }
@@ -70,17 +81,16 @@ namespace ProjetoAPI.Controllers
             Retorno<Aluno> retorno = new(null);
             try
             {
-                var resposta = await _alunoApplication.Excluir(codigo);
-                retorno.CarregaRetorno(resposta, true, "Aluno deletado com Sucesso", 200);
+                bool resposta = await _alunoApplication.Excluir(codigo);
+                retorno.CarregaRetorno(null, true, "Aluno deletado com sucesso", 200);
 
                 return Ok(retorno);
             }
             catch (Exception ex)
             {
-                retorno.CarregaRetorno(false, "Problemas ao deletar aluno infomado", 400);
+                retorno.CarregaRetorno(null, false, "Problemas ao deletar aluno infomado", 400);
                 return BadRequest();
             }
-
         }
 
 
